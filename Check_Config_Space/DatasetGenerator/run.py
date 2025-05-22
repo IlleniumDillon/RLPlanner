@@ -10,7 +10,7 @@ parser.add_argument('-p', '--points', type=int, default=100, help='Number of vie
 parser.add_argument('-r', '--rate', type=float, default=0.005, help='Sample rate of the config space')
 parser.add_argument('-n', '--num', type=int, default=128, help='Number of scenes to generate')
 parser.add_argument('-d', '--dir', type=str, default='../data', help='Directory to save the dataset')
-parser.add_argument('-t', '--threads', type=int, default=8, help='Number of threads to use for generation')
+parser.add_argument('-t', '--threads', type=int, default=16, help='Number of threads to use for generation')
 
 args = parser.parse_args()
 
