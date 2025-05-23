@@ -39,7 +39,7 @@ class SceneDataset(Dataset):
                             self.data.append((triangles, test_points[i], [0.0, 1.0] if in_config_space[i] else [1.0, 0.0]))
                         # Update the maximum number of triangles
                         self.max_triangles = max(self.max_triangles, len(triangles))
-        self.max_triangles += 1
+        # self.max_triangles += 1
 
     def __len__(self):
         return len(self.data)
@@ -50,12 +50,11 @@ class SceneDataset(Dataset):
             scene_data = self.transform(scene_data)
         # Pad the triangles to the maximum length
         padded_triangles = torch.tensor(scene_data[0], dtype=torch.float32)
+        valid_length = len(padded_triangles)
         if len(padded_triangles) < self.max_triangles:
             padding = torch.zeros((self.max_triangles - len(padded_triangles), 12), dtype=torch.float32)
             padded_triangles = torch.cat((padded_triangles, padding), dim=0)
-        mask = torch.zeros(self.max_triangles, dtype=torch.float32)
-        mask[:len(padded_triangles)] = 1.0
         return padded_triangles, \
                torch.tensor(scene_data[1], dtype=torch.float32), \
-               torch.tensor(scene_data[2], dtype=torch.float32), mask
+               torch.tensor(scene_data[2], dtype=torch.float32), valid_length
     
