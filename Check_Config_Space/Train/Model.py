@@ -158,8 +158,8 @@ class DecoderBlock(nn.Module):
     ):
         super(DecoderBlock, self).__init__(**kwargs)
         self.i = i
-        self.attention1 = MultiHeadAttention(key_size, query_size, value_size, num_hiddens, num_heads, dropout, use_bias)
-        self.add_norm1 = AddNorm(norm_shape, dropout)
+        # self.attention1 = MultiHeadAttention(key_size, query_size, value_size, num_hiddens, num_heads, dropout, use_bias)
+        # self.add_norm1 = AddNorm(norm_shape, dropout)
         self.attention2 = MultiHeadAttention(key_size, query_size, value_size, num_hiddens, num_heads, dropout, use_bias)
         self.add_norm2 = AddNorm(norm_shape, dropout)
         self.ffn = nn.Sequential(
@@ -186,8 +186,10 @@ class DecoderBlock(nn.Module):
         # y2 = self.attention2(y, enc_outputs, enc_outputs, enc_valid_lens)
         # z = self.add_norm2(y, y2)
         # return self.add_norm3(z, self.ffn(z)), state
-        x2 = self.attention1(x, x, x)
-        y = self.add_norm1(x, x2)
+        
+        # x2 = self.attention1(x, x, x)
+        # y = self.add_norm1(x, x2)
+        y = x
         y2 = self.attention2(y, state, state)
         z = self.add_norm2(y, y2)
         return self.add_norm3(z, self.ffn(z)), state
@@ -266,14 +268,17 @@ class CheckConfigSpaceModel(nn.Module):
         # self.transformer_decoder = nn.TransformerDecoder(decoder_layers, num_layers=block_num)
         
         self.transformer_encoder = TransformerEncoder(attention_dim, attention_dim, attention_dim, attention_dim, [attention_dim], num_heads, block_num)
-        self.transformer_decoder = TransformerDecoder(attention_dim, attention_dim, attention_dim, attention_dim, attention_dim, [attention_dim], num_heads, block_num)
+        self.transformer_decoder = TransformerDecoder(attention_dim, attention_dim, attention_dim, attention_dim, attention_dim, [attention_dim], num_heads, 1)
         
         # Define the final output layer
         self.fc_out = nn.Sequential(
             nn.Linear(attention_dim, attention_dim),
             nn.ReLU(),
             nn.Dropout(0.1),
-            nn.Linear(attention_dim, output_dim),
+            nn.Linear(attention_dim, attention_dim // 4),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(attention_dim // 4, output_dim),
         )
     
     def forward(self, scene_features, point_features, valid_lens=None):

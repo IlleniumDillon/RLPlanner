@@ -8,7 +8,7 @@ import torch.distributed as dist
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import DataLoader
 import torch
-
+import time
 from tqdm import tqdm
 import argparse
 # parser = argparse.ArgumentParser()
@@ -35,23 +35,25 @@ if __name__ == "__main__":
     test_data_dir = os.path.join(os.path.dirname(__file__), '../data/test')
     test_dataset = SceneDataset(test_data_dir)
     
-    save_model_dir = os.path.join(os.path.dirname(__file__), '../model')
-    if not os.path.exists(save_model_dir):
-        os.makedirs(save_model_dir)
+    if dist.get_rank() == 0:
+        time_now = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
+        save_model_dir = os.path.join(os.path.dirname(__file__), '../model', f'{time_now}')
+        if not os.path.exists(save_model_dir):
+            os.makedirs(save_model_dir)
     
     # Create a DataLoader
     # train_loader = DataLoader(dataset, batch_size=64, shuffle=True)
     train_sampler = DistributedSampler(train_dataset, shuffle=True)
-    train_loader = DataLoader(train_dataset, batch_size=256, sampler=train_sampler, num_workers=8)
+    train_loader = DataLoader(train_dataset, batch_size=512, sampler=train_sampler, num_workers=8)
     val_sampler = DistributedSampler(val_dataset, shuffle=False)
-    val_loader = DataLoader(val_dataset, batch_size=256, sampler=val_sampler, num_workers=8)
+    val_loader = DataLoader(val_dataset, batch_size=512, sampler=val_sampler, num_workers=8)
     test_sampler = DistributedSampler(test_dataset, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=256, sampler=test_sampler, num_workers=8)
+    test_loader = DataLoader(test_dataset, batch_size=512, sampler=test_sampler, num_workers=8)
     
     # Initialize the model
     scene_feature_dim = 12  # Example dimension
     point_feature_dim = 4   # Example dimension
-    model = CheckConfigSpaceModel(scene_feature_dim, point_feature_dim, attention_dim=64, num_heads=4, block_num=3).to(local_rank)
+    model = CheckConfigSpaceModel(scene_feature_dim, point_feature_dim, attention_dim=256, num_heads=4, block_num=3).to(local_rank)
     
     # Initialize weights
     model.apply(init_weights)
@@ -59,7 +61,7 @@ if __name__ == "__main__":
     
     # Define loss function and optimizer
     criterion = nn.CrossEntropyLoss().to(local_rank)
-    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.SGD(model.parameters(), lr=1e-4)
     
     # for _ in range(10):
         # # Train the model
@@ -104,7 +106,7 @@ if __name__ == "__main__":
             correct = 0
             total = 0
             with torch.no_grad():
-                for i, (scene_features, point_features, labels, mask) in enumerate(test_loader):
+                for i, (scene_features, point_features, labels, mask) in enumerate(val_loader):
                     point_features.unsqueeze_(1)
                     outputs = model(scene_features.to(local_rank), point_features.to(local_rank), mask.to(local_rank)).squeeze_(1).cpu()
                     outputs = torch.softmax(outputs, dim=1)

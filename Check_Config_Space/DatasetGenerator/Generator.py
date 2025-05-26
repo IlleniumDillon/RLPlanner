@@ -76,7 +76,7 @@ def generate_thread(
     tri = Delaunay(points)
     # select random triangles
     # @Output
-    selected_triangles = pts[tri.simplices[random.sample(range(len(tri.simplices)), k=int(len(tri.simplices) / 3))]]
+    selected_triangles = pts[tri.simplices[random.sample(range(len(tri.simplices)), k=int(len(tri.simplices) / 2))]]
     selected_triangles_polygon = [Polygon(triangle) for triangle in selected_triangles]
     obstacles = MultiPolygon(selected_triangles_polygon)
     # @Output
@@ -86,9 +86,31 @@ def generate_thread(
         for i in range(sample_num)
     ]
     # @Output
-    test_rst = [
+    test_rst_temp = [
         obstacles.contains(Point(test_point[0], test_point[1])) for test_point in test_points
     ]
+    test_points_free = [
+        test_points[i] for i in range(len(test_points)) if test_rst_temp[i]
+    ]
+    test_points_obstacles = [
+        test_points[i] for i in range(len(test_points)) if not test_rst_temp[i]
+    ]
+    half_num = 0
+    if len(test_points_free) > len(test_points_obstacles):
+        half_num = len(test_points_obstacles)
+        test_points_free = test_points_free[random.sample(range(len(test_points_free)), k=half_num)]
+    elif len(test_points_free) < len(test_points_obstacles):
+        half_num = len(test_points_free)
+        test_points_obstacles = test_points_obstacles[random.sample(range(len(test_points_obstacles)), k=half_num)]
+    else:
+        half_num = len(test_points_free)
+    
+    test_points = []
+    test_points.extend(test_points_free)
+    test_points.extend(test_points_obstacles)
+    test_rst = []
+    test_rst.extend([True] * half_num)
+    test_rst.extend([False] * half_num)
     
     # feature of single triangle
     # C_sx, C_sy, S_cx, S_cy, V_0x, V_1x, V_2x, V_0y, V_1y, V_2y, S_vx, S_vy
