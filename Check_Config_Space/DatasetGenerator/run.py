@@ -6,7 +6,7 @@ import os
 
 parser = argparse.ArgumentParser(description="Generate dataset for config space")
 parser.add_argument('-s', '--size', type=float, nargs=2, default=[1, 1], help='Boundary size of the scene')
-parser.add_argument('-p', '--points', type=int, default=10, help='Number of view points')
+parser.add_argument('-p', '--points', type=int, default=20, help='Number of view points')
 parser.add_argument('-r', '--rate', type=float, default=0.01, help='Sample rate of the config space')
 parser.add_argument('-n', '--num', type=int, default=16, help='Number of scenes to generate')
 parser.add_argument('-d', '--dir', type=str, default='../data', help='Directory to save the dataset')
