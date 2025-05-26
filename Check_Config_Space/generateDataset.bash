@@ -8,22 +8,22 @@ fi
 cd ./DatasetGenerator
 # 执行 Python 脚本
 echo Generating training dataset...
-python run.py -s 1 1 -p 10 -r 0.001 -n 128 -d ../data/train -t 32
-python run.py -s 1 1 -p 30 -r 0.001 -n 128 -d ../data/train -t 32
-python run.py -s 1 1 -p 50 -r 0.001 -n 128 -d ../data/train -t 32
-python run.py -s 1 1 -p 70 -r 0.001 -n 128 -d ../data/train -t 32
-python run.py -s 1 1 -p 90 -r 0.001 -n 128 -d ../data/train -t 32
+python run.py -s 1 1 -p 10 -r 0.01 -n 128 -d ../data/train -t 64
+python run.py -s 1 1 -p 30 -r 0.01 -n 128 -d ../data/train -t 64
+python run.py -s 1 1 -p 50 -r 0.01 -n 128 -d ../data/train -t 64
+python run.py -s 1 1 -p 70 -r 0.01 -n 128 -d ../data/train -t 64
+python run.py -s 1 1 -p 90 -r 0.01 -n 128 -d ../data/train -t 64
 # 验证集
 echo Generating validation dataset...
-python run.py -s 1 1 -p 10 -r 0.01 -n 16 -d ../data/val -t 32
-python run.py -s 1 1 -p 30 -r 0.01 -n 16 -d ../data/val -t 32
-python run.py -s 1 1 -p 50 -r 0.01 -n 16 -d ../data/val -t 32
-python run.py -s 1 1 -p 70 -r 0.01 -n 16 -d ../data/val -t 32
-python run.py -s 1 1 -p 90 -r 0.01 -n 16 -d ../data/val -t 32
+python run.py -s 1 1 -p 10 -r 0.01 -n 16 -d ../data/val -t 64
+python run.py -s 1 1 -p 30 -r 0.01 -n 16 -d ../data/val -t 64
+python run.py -s 1 1 -p 50 -r 0.01 -n 16 -d ../data/val -t 64
+python run.py -s 1 1 -p 70 -r 0.01 -n 16 -d ../data/val -t 64
+python run.py -s 1 1 -p 90 -r 0.01 -n 16 -d ../data/val -t 64
 # 测试集
 echo Generating test dataset...
-python run.py -s 1 1 -p 20 -r 0.01 -n 16 -d ../data/test -t 32
-python run.py -s 1 1 -p 40 -r 0.01 -n 16 -d ../data/test -t 32
-python run.py -s 1 1 -p 60 -r 0.01 -n 16 -d ../data/test -t 32
-python run.py -s 1 1 -p 80 -r 0.01 -n 16 -d ../data/test -t 32
-python run.py -s 1 1 -p 100 -r 0.01 -n 16 -d ../data/test -t 32
+python run.py -s 1 1 -p 20 -r 0.01 -n 16 -d ../data/test -t 64
+python run.py -s 1 1 -p 40 -r 0.01 -n 16 -d ../data/test -t 64
+python run.py -s 1 1 -p 60 -r 0.01 -n 16 -d ../data/test -t 64
+python run.py -s 1 1 -p 80 -r 0.01 -n 16 -d ../data/test -t 64
+python run.py -s 1 1 -p 100 -r 0.01 -n 16 -d ../data/test -t 64
