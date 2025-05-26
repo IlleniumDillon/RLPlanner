@@ -68,7 +68,7 @@ if __name__ == "__main__":
     # Initialize the model
     scene_feature_dim = 12  # Example dimension
     point_feature_dim = 4   # Example dimension
-    model = CheckConfigSpaceModel(scene_feature_dim, point_feature_dim, attention_dim=64, num_heads=2, block_num=2).to(device)
+    model = CheckConfigSpaceModel(scene_feature_dim, point_feature_dim, attention_dim=128, num_heads=8, block_num=6).to(device)
     
     # Initialize weights
     model.apply(init_weights)
@@ -110,7 +110,7 @@ if __name__ == "__main__":
             optimizer.step()
             
             running_loss += loss.item()
-            # print(f"Batch [{i+1}/{len(train_loader)}], Loss: {loss.item():.4f}")
+            print(f"Batch [{i+1}/{len(train_loader)}], Loss: {loss.item():.4f}", end="\r")
         
         print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(train_loader):.4f}")
         
